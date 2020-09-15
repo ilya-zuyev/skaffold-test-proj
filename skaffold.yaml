@@ -1,0 +1,40 @@
+apiVersion: skaffold/v2beta8
+kind: Config
+metadata:
+  name: sk-test
+
+build:
+  artifacts:
+  - image: bar
+    docker:
+      dockerfile: Dockerfile.bar
+  - image: foo
+    docker:
+      dockerfile: Dockerfile.foo
+  - image: foo
+    docker:
+      dockerfile: Dockerfile.foo
+  local:
+    push: false
+    concurrency: 4
+  tagPolicy:
+    dateTime:
+      format: 2006-01-02_15-04-05.999_MST
+
+deploy:
+  kubectl:
+    manifests:
+    - deploy.yaml
+
+portForward:
+
+- resourceType: Service
+  resourceName: foo
+  port: 80
+  localPort: 8001
+
+- resourceType: Service
+  resourceName: bar
+  port: 80
+  localPort: 8002
+
